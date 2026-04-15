@@ -2,9 +2,7 @@ package com.am9.okazx.mapper;
 
 import com.am9.okazx.model.dto.ProductRequest;
 import com.am9.okazx.model.dto.ProductResponse;
-import com.am9.okazx.model.dto.UserRequest;
 import com.am9.okazx.model.entity.Product;
-import com.am9.okazx.model.entity.User;
 import org.mapstruct.*;
 
 @Mapper(componentModel = "spring")
