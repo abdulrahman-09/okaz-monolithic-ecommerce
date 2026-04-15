@@ -5,6 +5,7 @@ import com.am9.okazx.mapper.ProductMapper;
 import com.am9.okazx.model.dto.ProductRequest;
 import com.am9.okazx.model.dto.ProductResponse;
 import com.am9.okazx.model.dto.UserRequest;
+import com.am9.okazx.model.dto.UserResponse;
 import com.am9.okazx.model.entity.Product;
 import com.am9.okazx.repository.ProductRepository;
 import com.am9.okazx.service.ProductService;
@@ -32,6 +33,14 @@ public class ProductServiceImpl implements ProductService {
         return productRepository.findById(id)
                 .map(productMapper::toDto)
                 .orElseThrow(() -> new ResourceNotFoundException("Product not found with id: " + id));
+    }
+
+    @Override
+    public List<ProductResponse> searchProducts(String keyword) {
+        return productRepository.searchProducts(keyword)
+                .stream()
+                .map(productMapper::toDto)
+                .toList();
     }
 
     @Override
