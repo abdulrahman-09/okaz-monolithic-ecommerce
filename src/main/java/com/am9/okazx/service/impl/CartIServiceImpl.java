@@ -63,6 +63,13 @@ public class CartIServiceImpl implements CartService {
                 .toList();
     }
 
+    @Override
+    public void clearCart(Long userId) {
+        userRepository.findById(userId).ifPresent(
+                cartItemRepository::deleteByUser
+        );
+    }
+
 
     // Helper methods
     private void createCartItem(User user, Product product, Integer quantity) {

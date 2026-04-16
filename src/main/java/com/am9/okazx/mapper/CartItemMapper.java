@@ -11,7 +11,7 @@ import org.mapstruct.Mapping;
         uses = { ProductMapper.class }
 )
 public interface CartItemMapper {
-    
+
     @Mapping(target = "userId", source = "user.id")  // add this
     CartItemResponse toDto(CartItem cartItem);
 

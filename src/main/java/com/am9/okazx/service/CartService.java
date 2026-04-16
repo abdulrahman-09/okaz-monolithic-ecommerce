@@ -10,4 +10,5 @@ public interface CartService {
     void addToCart(Long userId, CartItemRequest cartItemRequest);
     void deleteFromCart(Long userId, Long productId);
     List<CartItemResponse> getCart(Long userId);
+    void clearCart(Long userId);
 }
