@@ -2,25 +2,35 @@ package com.am9.okazx.model.entity;
 
 import com.am9.okazx.model.enums.UserRole;
 import jakarta.persistence.*;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDateTime;
+import java.util.Collection;
+import java.util.List;
 
 @Entity(name = "users")
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
-public class User {
+@AllArgsConstructor
+@Builder
+public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String firstName;
     private String lastName;
+
+    @Column(unique = true)
     private String email;
     private String phone;
     private UserRole userRole = UserRole.CUSTOMER;
+    private String password;
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "address_id", referencedColumnName = "id")
     private Address address;
@@ -29,4 +39,13 @@ public class User {
     @UpdateTimestamp
     private LocalDateTime updateTime;
 
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of(new SimpleGrantedAuthority("ROLE_" + userRole.name()));
+    }
+
+    @Override
+    public String getUsername() {
+        return email;
+    }
 }
