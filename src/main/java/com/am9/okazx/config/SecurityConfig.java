@@ -38,8 +38,13 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/v1/auth/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v1/products/**").permitAll()
+                        .requestMatchers(
+                                "/swagger-ui/**",
+                                "/swagger-ui.html",
+                                "/v3/api-docs/**"
+                        ).permitAll()
 
-                        .requestMatchers(HttpMethod.GET, "/api/v1/users/**").hasRole("ADMIN")
+                        .requestMatchers("/api/v1/cart/**").hasRole("CUSTOMER")
                         .requestMatchers(HttpMethod.POST, "/api/v1/products/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.PUT, "/api/v1/products/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/api/v1/products/**").hasRole("ADMIN")

@@ -1,5 +1,7 @@
 package com.am9.okazx.service.impl;
 
+import com.am9.okazx.dto.UpdateOrderStatusRequest;
+import com.am9.okazx.exception.InvalidOrderStatusTransitionException;
 import com.am9.okazx.exception.ResourceNotFoundException;
 import com.am9.okazx.mapper.OrderMapper;
 import com.am9.okazx.dto.response.OrderResponse;
@@ -19,6 +21,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -59,5 +62,76 @@ public class OrderServiceImpl implements OrderService {
         cartService.clearCart(userId);
 
         return orderMapper.toDto(savedOrder);
+    }
+
+    @Override
+    public List<OrderResponse> findAll() {
+        return orderRepository.findAll()
+                .stream()
+                .map(orderMapper::toDto)
+                .toList();
+    }
+
+    @Override
+    public List<OrderResponse> findByUserId(Long id) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("No user with id: " + id));
+
+        return orderRepository.findAllByUser(user)
+                .stream()
+                .map(orderMapper::toDto)
+                .toList();
+    }
+
+    @Override
+    public OrderResponse findById(Long id) {
+        Order order = orderRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("No order with id: " + id));
+        return orderMapper.toDto(order);
+    }
+
+    @Override
+    public OrderResponse updateOrderStatus(Long id, UpdateOrderStatusRequest request) {
+        Order order = orderRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Order not found with id: " + id));
+
+        validateStatusTransition(order.getStatus(), request.status());
+
+        order.setStatus(request.status());
+        return orderMapper.toDto(orderRepository.save(order));
+    }
+
+    @Override
+    public OrderResponse cancelOrder(Long id) {
+        Order order = orderRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Order not found with id: " + id));
+
+        validateStatusTransition(order.getStatus(), OrderStatus.CANCELED);
+
+        order.setStatus(OrderStatus.CANCELED);
+        return orderMapper.toDto(orderRepository.save(order));
+    }
+
+    @Override
+    public boolean isOwner(Long orderId, Long userId) {
+        return orderRepository.findById(orderId)
+                .map(order -> order.getUser().getId().equals(userId))
+                .orElse(false);
+    }
+
+    private void validateStatusTransition(OrderStatus current, OrderStatus next) {
+        Map<OrderStatus, List<OrderStatus>> allowed = Map.of(
+                OrderStatus.PENDING,   List.of(OrderStatus.CONFIRMED, OrderStatus.CANCELED),
+                OrderStatus.CONFIRMED, List.of(OrderStatus.SHIPPED,   OrderStatus.CANCELED),
+                OrderStatus.SHIPPED,   List.of(OrderStatus.DELIVERED),
+                OrderStatus.DELIVERED, List.of(),
+                OrderStatus.CANCELED,  List.of()
+        );
+
+        if (!allowed.get(current).contains(next)) {
+            throw new InvalidOrderStatusTransitionException(
+                    "Cannot transition from " + current + " to " + next
+            );
+        }
     }
 }

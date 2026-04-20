@@ -1,5 +1,6 @@
 package com.am9.okazx.exception.handler;
 
+import com.am9.okazx.exception.InvalidOrderStatusTransitionException;
 import com.am9.okazx.exception.UserAlreadyExistsException;
 import com.am9.okazx.exception.ResourceNotFoundException;
 import org.springframework.http.HttpStatus;
@@ -24,6 +25,11 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(BadCredentialsException.class)
     public ResponseEntity<String> handleBadCredentials(BadCredentialsException ex) {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid email or password");
+    }
+
+    @ExceptionHandler(InvalidOrderStatusTransitionException.class)
+    public ResponseEntity<String> handleInvalidTransition(InvalidOrderStatusTransitionException ex) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
     }
 
     @ExceptionHandler(Exception.class)
