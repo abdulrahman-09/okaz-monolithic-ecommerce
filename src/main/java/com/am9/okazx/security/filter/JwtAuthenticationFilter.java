@@ -1,6 +1,6 @@
-package com.am9.okazx.secutity.filter;
+package com.am9.okazx.security.filter;
 
-import com.am9.okazx.secutity.service.JwtService;
+import com.am9.okazx.security.service.JwtService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

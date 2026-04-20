@@ -2,8 +2,8 @@ package com.am9.okazx.service.impl;
 
 import com.am9.okazx.exception.ResourceNotFoundException;
 import com.am9.okazx.mapper.CartItemMapper;
-import com.am9.okazx.model.dto.CartItemRequest;
-import com.am9.okazx.model.dto.CartItemResponse;
+import com.am9.okazx.dto.request.CartItemRequest;
+import com.am9.okazx.dto.response.CartItemResponse;
 import com.am9.okazx.model.entity.CartItem;
 import com.am9.okazx.model.entity.Product;
 import com.am9.okazx.model.entity.User;

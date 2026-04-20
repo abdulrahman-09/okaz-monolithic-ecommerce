@@ -1,13 +1,10 @@
 package com.am9.okazx.mapper;
 
-import com.am9.okazx.model.dto.OrderItemResponse;
+import com.am9.okazx.dto.response.OrderItemResponse;
 
 import com.am9.okazx.model.entity.OrderItem;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-
-
-import java.math.BigDecimal;
 
 @Mapper(componentModel = "spring")
 public interface OrderItemMapper {

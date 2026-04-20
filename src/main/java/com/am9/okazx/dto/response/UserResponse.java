@@ -1,4 +1,4 @@
-package com.am9.okazx.model.dto;
+package com.am9.okazx.dto.response;
 
 import com.am9.okazx.model.entity.Address;
 import com.am9.okazx.model.enums.UserRole;

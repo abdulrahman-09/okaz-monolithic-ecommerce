@@ -1,7 +1,7 @@
 package com.am9.okazx.mapper;
 
-import com.am9.okazx.model.dto.ProductRequest;
-import com.am9.okazx.model.dto.ProductResponse;
+import com.am9.okazx.dto.request.ProductRequest;
+import com.am9.okazx.dto.response.ProductResponse;
 import com.am9.okazx.model.entity.Product;
 import org.mapstruct.*;
 

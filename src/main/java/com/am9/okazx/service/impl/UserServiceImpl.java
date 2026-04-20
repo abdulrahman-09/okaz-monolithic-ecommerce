@@ -1,9 +1,9 @@
 package com.am9.okazx.service.impl;
 
 import com.am9.okazx.exception.ResourceNotFoundException;
-import com.am9.okazx.model.dto.UserResponse;
+import com.am9.okazx.dto.response.UserResponse;
 import com.am9.okazx.mapper.UserMapper;
-import com.am9.okazx.model.dto.UserRequest;
+import com.am9.okazx.dto.request.UserRequest;
 import com.am9.okazx.model.entity.User;
 import com.am9.okazx.repository.UserRepository;
 import com.am9.okazx.service.UserService;
@@ -32,13 +32,6 @@ public class UserServiceImpl implements UserService {
         return userRepository.findById(id)
                 .map(userMapper::toDto)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + id));
-    }
-
-    @Override
-    public UserResponse create(UserRequest userDto) {
-        return userMapper.toDto(
-                userRepository.save(userMapper.toEntity(userDto))
-        );
     }
 
     @Override

@@ -2,10 +2,8 @@ package com.am9.okazx.service.impl;
 
 import com.am9.okazx.exception.ResourceNotFoundException;
 import com.am9.okazx.mapper.ProductMapper;
-import com.am9.okazx.model.dto.ProductRequest;
-import com.am9.okazx.model.dto.ProductResponse;
-import com.am9.okazx.model.dto.UserRequest;
-import com.am9.okazx.model.dto.UserResponse;
+import com.am9.okazx.dto.request.ProductRequest;
+import com.am9.okazx.dto.response.ProductResponse;
 import com.am9.okazx.model.entity.Product;
 import com.am9.okazx.repository.ProductRepository;
 import com.am9.okazx.service.ProductService;

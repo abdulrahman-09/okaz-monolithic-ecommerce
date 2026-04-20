@@ -1,4 +1,4 @@
-package com.am9.okazx.model.dto;
+package com.am9.okazx.dto.request;
 
 import com.am9.okazx.model.entity.Address;
 

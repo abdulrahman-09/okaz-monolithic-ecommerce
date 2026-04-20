@@ -1,7 +1,6 @@
 package com.am9.okazx.mapper;
 
-import com.am9.okazx.model.dto.CartItemRequest;
-import com.am9.okazx.model.dto.CartItemResponse;
+import com.am9.okazx.dto.response.CartItemResponse;
 import com.am9.okazx.model.entity.CartItem;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;

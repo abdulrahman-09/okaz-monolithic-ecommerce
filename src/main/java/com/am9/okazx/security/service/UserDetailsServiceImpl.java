@@ -1,4 +1,4 @@
-package com.am9.okazx.secutity.service;
+package com.am9.okazx.security.service;
 
 import com.am9.okazx.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -15,7 +15,6 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String userEmail) throws UsernameNotFoundException {
-
         return userRepository.findByEmail(userEmail)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found: " + userEmail));
     }

@@ -1,4 +1,4 @@
-package com.am9.okazx.secutity.service;
+package com.am9.okazx.security.service;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;

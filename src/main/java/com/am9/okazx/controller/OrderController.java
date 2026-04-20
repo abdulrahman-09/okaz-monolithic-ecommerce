@@ -1,6 +1,6 @@
 package com.am9.okazx.controller;
 
-import com.am9.okazx.model.dto.OrderResponse;
+import com.am9.okazx.dto.response.OrderResponse;
 import com.am9.okazx.service.OrderService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/v1/order")
+@RequestMapping("/api/v1/orders")
 @RequiredArgsConstructor
 public class OrderController {
     private final OrderService orderService;

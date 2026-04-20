@@ -1,7 +1,7 @@
 package com.am9.okazx.service;
 
-import com.am9.okazx.model.dto.CartItemRequest;
-import com.am9.okazx.model.dto.CartItemResponse;
+import com.am9.okazx.dto.request.CartItemRequest;
+import com.am9.okazx.dto.response.CartItemResponse;
 
 import java.util.List;
 

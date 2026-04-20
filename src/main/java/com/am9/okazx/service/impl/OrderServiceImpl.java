@@ -2,7 +2,7 @@ package com.am9.okazx.service.impl;
 
 import com.am9.okazx.exception.ResourceNotFoundException;
 import com.am9.okazx.mapper.OrderMapper;
-import com.am9.okazx.model.dto.OrderResponse;
+import com.am9.okazx.dto.response.OrderResponse;
 import com.am9.okazx.model.entity.CartItem;
 import com.am9.okazx.model.entity.Order;
 import com.am9.okazx.model.entity.OrderItem;

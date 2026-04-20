@@ -1,6 +1,6 @@
 package com.am9.okazx.mapper;
 
-import com.am9.okazx.model.dto.AddressDto;
+import com.am9.okazx.dto.AddressDto;
 import com.am9.okazx.model.entity.Address;
 import org.mapstruct.BeanMapping;
 import org.mapstruct.Mapper;

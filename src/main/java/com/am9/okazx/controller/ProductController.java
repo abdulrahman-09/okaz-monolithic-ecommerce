@@ -2,10 +2,8 @@ package com.am9.okazx.controller;
 
 
 
-import com.am9.okazx.model.dto.ProductRequest;
-import com.am9.okazx.model.dto.ProductResponse;
-import com.am9.okazx.model.dto.UserRequest;
-import com.am9.okazx.model.dto.UserResponse;
+import com.am9.okazx.dto.request.ProductRequest;
+import com.am9.okazx.dto.response.ProductResponse;
 import com.am9.okazx.service.ProductService;
 
 import lombok.RequiredArgsConstructor;
