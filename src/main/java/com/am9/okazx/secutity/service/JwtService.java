@@ -4,13 +4,12 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
-import java.security.PublicKey;
-import java.util.Base64;
+import java.util.Date;
 import java.util.function.Function;
 
 @Service
@@ -40,6 +39,21 @@ public class JwtService{
         return claimResolver.apply(claims);
     }
 
+    public String generateToken(UserDetails userDetails) {
+        return Jwts
+                .builder()
+                .subject(userDetails.getUsername())
+                .claim("role", userDetails.getAuthorities())
+                .issuedAt(new Date())
+                .expiration(new Date(System.currentTimeMillis() + expirationMs))
+                .signWith(getSigningKey())
+                .compact();
+    }
+
+    public Boolean isTokenValid(String token, UserDetails userDetails){
+        return extractUsername(token).equals(userDetails.getUsername())
+                && !getClaims(token).getExpiration().before(new Date());
+    }
 
     private Claims getClaims(String token){
         return Jwts.parser()
