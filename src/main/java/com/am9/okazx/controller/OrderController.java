@@ -1,12 +1,12 @@
 package com.am9.okazx.controller;
 
-import com.am9.okazx.dto.UpdateOrderStatusRequest;
+import com.am9.okazx.dto.request.UpdateOrderStatusRequest;
 import com.am9.okazx.dto.response.OrderResponse;
 import com.am9.okazx.model.entity.User;
-import com.am9.okazx.model.enums.OrderStatus;
 import com.am9.okazx.service.OrderService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -62,7 +62,7 @@ public class OrderController {
     @Operation(summary = "Update order status by order id")
     public ResponseEntity<OrderResponse> updateOrderStatus(
             @PathVariable Long id,
-            @RequestBody UpdateOrderStatusRequest request) {
+            @RequestBody @Valid UpdateOrderStatusRequest request) {
         return ResponseEntity.ok(orderService.updateOrderStatus(id, request));
     }
 

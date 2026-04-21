@@ -1,7 +1,5 @@
 package com.am9.okazx.dto.response;
 
-import com.am9.okazx.dto.AddressDto;
-import com.am9.okazx.model.entity.Address;
 import com.am9.okazx.model.enums.UserRole;
 
 import java.time.LocalDateTime;
@@ -13,7 +11,7 @@ public record UserResponse(
         String email,
         String phone,
         UserRole userRole,
-        AddressDto addressDto,
+        AddressResponse addressResponse,
         LocalDateTime creationTime
 ) {
 }

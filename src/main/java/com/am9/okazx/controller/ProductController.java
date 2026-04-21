@@ -8,6 +8,7 @@ import com.am9.okazx.service.ProductService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -32,7 +33,7 @@ public class ProductController {
 
     @PostMapping
     @Operation(summary = "Add product")
-    public ResponseEntity<ProductResponse> createProduct(@RequestBody ProductRequest productRequest){
+    public ResponseEntity<ProductResponse> createProduct(@RequestBody @Valid ProductRequest productRequest){
         ProductResponse createdProduct = productService.create(productRequest);
 
         URI location = ServletUriComponentsBuilder
@@ -58,7 +59,7 @@ public class ProductController {
 
     @PutMapping("/{id}")
     @Operation(summary = "Update products by id")
-    public ResponseEntity<ProductResponse> updateProduct(@PathVariable Long id, @RequestBody ProductRequest productRequest){
+    public ResponseEntity<ProductResponse> updateProduct(@PathVariable Long id, @RequestBody @Valid ProductRequest productRequest){
         return ResponseEntity.ok(
                 productService.update(id, productRequest)
         );

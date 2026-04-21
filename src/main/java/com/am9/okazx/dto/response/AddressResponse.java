@@ -1,10 +1,9 @@
-package com.am9.okazx.dto;
+package com.am9.okazx.dto.response;
 
-public record AddressDto(
+public record AddressResponse(
         String street,
         String city,
         String governorate,
         String country,
         String zipCode
-) {
-}
+) {}

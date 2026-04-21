@@ -1,6 +1,6 @@
 package com.am9.okazx.service.impl;
 
-import com.am9.okazx.dto.UpdateOrderStatusRequest;
+import com.am9.okazx.dto.request.UpdateOrderStatusRequest;
 import com.am9.okazx.exception.InvalidOrderStatusTransitionException;
 import com.am9.okazx.exception.ResourceNotFoundException;
 import com.am9.okazx.mapper.OrderMapper;

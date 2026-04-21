@@ -7,6 +7,7 @@ import com.am9.okazx.service.CartService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,7 +27,7 @@ public class CartItemController {
     @Operation(summary = "Add item to cart")
     public ResponseEntity<Void> addToCart(
             Authentication authentication,
-            @RequestBody CartItemRequest cartItemRequest
+            @RequestBody @Valid CartItemRequest cartItemRequest
             ){
         Long userId =((User) authentication.getPrincipal()).getId();
         cartService.addToCart(userId, cartItemRequest);

@@ -6,6 +6,7 @@ import com.am9.okazx.security.dto.LoginRequest;
 import com.am9.okazx.security.dto.RegisterRequest;
 import com.am9.okazx.service.AuthenticationService;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,18 +25,18 @@ public class AuthenticationController {
 
 
     @PostMapping("/register")
-    public ResponseEntity<AuthenticationResponse> register(@RequestBody RegisterRequest request){
+    public ResponseEntity<AuthenticationResponse> register(@RequestBody @Valid RegisterRequest request){
         return ResponseEntity.status(HttpStatus.CREATED).body(authenticationService.register(request));
     }
 
     //For test
     @PostMapping("/register-admin")
-    public ResponseEntity<AuthenticationResponse> registerAdmin(@RequestBody RegisterRequest request) {
+    public ResponseEntity<AuthenticationResponse> registerAdmin(@RequestBody @Valid RegisterRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(authenticationService.registerAdminUser(request));
     }
 
     @PostMapping("/login")
-    public ResponseEntity<AuthenticationResponse> authenticate(@RequestBody LoginRequest request){
+    public ResponseEntity<AuthenticationResponse> authenticate(@RequestBody @Valid LoginRequest request){
         return ResponseEntity.ok(authenticationService.authenticate(request));
     }
 

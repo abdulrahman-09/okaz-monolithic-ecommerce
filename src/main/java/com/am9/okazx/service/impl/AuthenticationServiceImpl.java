@@ -41,7 +41,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .email(request.email())
                 .password(passwordEncoder.encode(request.password()))
                 .phone(request.phone())
-                .address(addressMapper.toEntity(request.addressDto()))
+                .address(addressMapper.toEntity(request.addressRequest()))
                 .userRole(UserRole.CUSTOMER)
                 .build();
 
@@ -75,7 +75,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .email(request.email())
                 .password(passwordEncoder.encode(request.password()))
                 .phone(request.phone())
-                .address(addressMapper.toEntity(request.addressDto()))
+                .address(addressMapper.toEntity(request.addressRequest()))
                 .userRole(UserRole.ADMIN)
                 .build();
 
