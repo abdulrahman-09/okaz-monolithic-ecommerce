@@ -11,7 +11,7 @@ import com.am9.okazx.repository.CartItemRepository;
 import com.am9.okazx.repository.ProductRepository;
 import com.am9.okazx.repository.UserRepository;
 import com.am9.okazx.service.CartService;
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -27,6 +27,7 @@ public class CartIServiceImpl implements CartService {
     private final CartItemRepository cartItemRepository;
 
     @Override
+    @Transactional
     public void addToCart(Long userId, CartItemRequest cartItemRequest) {
         Product product = productRepository.findById(cartItemRequest.productId())
                 .orElseThrow(
@@ -43,8 +44,9 @@ public class CartIServiceImpl implements CartService {
                 );
 
     }
-    @Transactional
+
     @Override
+    @Transactional
     public void deleteFromCart(Long userId, Long productId) {
         if (!cartItemRepository.existsByUserIdAndProductId(userId, productId)) {
             throw new ResourceNotFoundException("Cart item not found");
@@ -53,6 +55,7 @@ public class CartIServiceImpl implements CartService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<CartItemResponse> getCart(Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + userId));
@@ -64,6 +67,7 @@ public class CartIServiceImpl implements CartService {
     }
 
     @Override
+    @Transactional
     public void clearCart(Long userId) {
         userRepository.findById(userId).ifPresent(
                 cartItemRepository::deleteByUser

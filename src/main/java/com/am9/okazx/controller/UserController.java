@@ -30,8 +30,6 @@ public class UserController {
         return ResponseEntity.ok(userService.findById(id));
     }
 
-
-
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN') or (hasRole('CUSTOMER') and #id == authentication.principal.id)")
     public ResponseEntity<UserResponse> updateUser(@PathVariable Long id, @RequestBody UserRequest userDto){

@@ -9,6 +9,7 @@ import com.am9.okazx.repository.ProductRepository;
 import com.am9.okazx.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -19,6 +20,7 @@ public class ProductServiceImpl implements ProductService {
     final private ProductMapper productMapper;
 
     @Override
+    @Transactional(readOnly = true)
     public List<ProductResponse> findAll() {
         return productRepository.findAll()
                 .stream()
@@ -27,6 +29,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public ProductResponse findById(Long id) {
         return productRepository.findById(id)
                 .map(productMapper::toDto)
@@ -34,6 +37,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<ProductResponse> searchProducts(String keyword) {
         return productRepository.searchProducts(keyword)
                 .stream()
@@ -42,6 +46,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    @Transactional
     public ProductResponse create(ProductRequest productRequest) {
         return productMapper.toDto(
                 productRepository.save(productMapper.toEntity(productRequest))
@@ -49,6 +54,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    @Transactional
     public ProductResponse update(Long id, ProductRequest updatedProductDto) {
         Product productToUpdate = productRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Product not found with id: " + id));
@@ -60,6 +66,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    @Transactional
     public void delete(Long id) {
         if (!productRepository.existsById(id)) {
             throw new ResourceNotFoundException("Product not found with id: " + id);

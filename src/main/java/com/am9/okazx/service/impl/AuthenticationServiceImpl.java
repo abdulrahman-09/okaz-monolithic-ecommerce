@@ -9,6 +9,7 @@ import com.am9.okazx.model.enums.UserRole;
 import com.am9.okazx.repository.UserRepository;
 import com.am9.okazx.security.service.JwtService;
 import com.am9.okazx.service.AuthenticationService;
+import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -24,7 +25,9 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
 
+
     @Override
+    @Transactional
     public AuthenticationResponse register(RegisterRequest request) {
         if (userRepository.findByEmail(request.email()).isPresent()) {
             throw new UserAlreadyExistsException("Email already in use");
@@ -55,5 +58,28 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         User user = userRepository.findByEmail(request.email()).orElseThrow();
         String token = jwtService.generateToken(user);
         return new AuthenticationResponse(token);
+    }
+
+    @Override
+    @Transactional
+    public AuthenticationResponse registerAdminUser(RegisterRequest request) {
+        if (userRepository.findByEmail(request.email()).isPresent()) {
+            throw new UserAlreadyExistsException("Email already in use");
+        }
+        User adminUser = User
+                .builder()
+                .firstName(request.firstName())
+                .lastName(request.lastName())
+                .email(request.email())
+                .password(passwordEncoder.encode(request.password()))
+                .phone(request.phone())
+                .address(request.address())
+                .userRole(UserRole.ADMIN)
+                .build();
+
+        String token = jwtService.generateToken(
+                userRepository.save(adminUser)
+        );
+        return new  AuthenticationResponse(token);
     }
 }
