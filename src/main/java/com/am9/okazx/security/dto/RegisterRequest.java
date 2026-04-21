@@ -1,5 +1,6 @@
 package com.am9.okazx.security.dto;
 
+import com.am9.okazx.dto.AddressDto;
 import com.am9.okazx.model.entity.Address;
 
 public record RegisterRequest(
@@ -7,7 +8,7 @@ public record RegisterRequest(
         String lastName,
         String email,
         String phone,
-        Address address,
+        AddressDto addressDto,
         String password
 ) {
 }

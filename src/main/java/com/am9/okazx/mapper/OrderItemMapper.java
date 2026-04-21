@@ -6,7 +6,7 @@ import com.am9.okazx.model.entity.OrderItem;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", imports = { java.math.BigDecimal.class })
 public interface OrderItemMapper {
 
     @Mapping(target = "productId", source = "product.id")

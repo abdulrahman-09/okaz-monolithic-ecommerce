@@ -1,6 +1,7 @@
 package com.am9.okazx.service.impl;
 
 import com.am9.okazx.exception.UserAlreadyExistsException;
+import com.am9.okazx.mapper.AddressMapper;
 import com.am9.okazx.security.dto.AuthenticationResponse;
 import com.am9.okazx.security.dto.LoginRequest;
 import com.am9.okazx.security.dto.RegisterRequest;
@@ -24,6 +25,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private final JwtService jwtService;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
+    private final AddressMapper addressMapper;
 
 
     @Override
@@ -39,7 +41,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .email(request.email())
                 .password(passwordEncoder.encode(request.password()))
                 .phone(request.phone())
-                .address(request.address())
+                .address(addressMapper.toEntity(request.addressDto()))
                 .userRole(UserRole.CUSTOMER)
                 .build();
 
@@ -73,7 +75,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .email(request.email())
                 .password(passwordEncoder.encode(request.password()))
                 .phone(request.phone())
-                .address(request.address())
+                .address(addressMapper.toEntity(request.addressDto()))
                 .userRole(UserRole.ADMIN)
                 .build();
 

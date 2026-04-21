@@ -5,6 +5,8 @@ import com.am9.okazx.dto.response.OrderResponse;
 import com.am9.okazx.model.entity.User;
 import com.am9.okazx.model.enums.OrderStatus;
 import com.am9.okazx.service.OrderService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,11 +19,13 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1/orders")
 @RequiredArgsConstructor
+@Tag(name = "Orders", description = "Order lifecycle management")
 public class OrderController {
     private final OrderService orderService;
 
     @PostMapping
     @PreAuthorize("hasRole('CUSTOMER')")
+    @Operation(summary = "Create order with app elements in current user cart")
     public ResponseEntity<OrderResponse> creatOrder(
             Authentication authentication
     ){
@@ -33,12 +37,14 @@ public class OrderController {
 
     @GetMapping
     @PreAuthorize("hasRole('ADMIN')")
+    @Operation(summary = "Get all orders")
     public ResponseEntity<List<OrderResponse>> findAll() {
         return ResponseEntity.ok(orderService.findAll());
     }
 
     @GetMapping("/my")
     @PreAuthorize("hasRole('CUSTOMER')")
+    @Operation(summary = "Get current user orders")
     public ResponseEntity<List<OrderResponse>> findMyOrders(Authentication authentication) {
         User user = (User) authentication.getPrincipal();
         return ResponseEntity.ok(orderService.findByUserId(user.getId()));
@@ -46,12 +52,14 @@ public class OrderController {
 
     @GetMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN') or (hasRole('CUSTOMER') and @orderService.isOwner(#id, authentication.principal.id))")
+    @Operation(summary = "Get order by order ID")
     public ResponseEntity<OrderResponse> findById(@PathVariable Long id) {
         return ResponseEntity.ok(orderService.findById(id));
     }
 
     @PatchMapping("/{id}/status")
     @PreAuthorize("hasRole('ADMIN')")
+    @Operation(summary = "Update order status by order id")
     public ResponseEntity<OrderResponse> updateOrderStatus(
             @PathVariable Long id,
             @RequestBody UpdateOrderStatusRequest request) {
@@ -60,6 +68,7 @@ public class OrderController {
 
     @PatchMapping("/{id}/cancel")
     @PreAuthorize("hasRole('ADMIN') or (hasRole('CUSTOMER') and @orderService.isOwner(#id, authentication.principal.id))")
+    @Operation(summary = "Cancel order by order id")
     public ResponseEntity<OrderResponse> cancelOrder(@PathVariable Long id) {
         return ResponseEntity.ok(orderService.cancelOrder(id));
     }

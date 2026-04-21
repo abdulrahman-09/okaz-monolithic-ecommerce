@@ -5,6 +5,7 @@ import com.am9.okazx.security.dto.AuthenticationResponse;
 import com.am9.okazx.security.dto.LoginRequest;
 import com.am9.okazx.security.dto.RegisterRequest;
 import com.am9.okazx.service.AuthenticationService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/v1/auth")
 @RequiredArgsConstructor
+@Tag(name = "Authentication", description = "Register and login endpoints")
 public class AuthenticationController {
 
     private final AuthenticationService authenticationService;
