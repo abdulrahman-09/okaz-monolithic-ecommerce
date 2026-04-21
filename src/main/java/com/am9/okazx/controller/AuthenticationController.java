@@ -5,11 +5,13 @@ import com.am9.okazx.security.dto.AuthenticationResponse;
 import com.am9.okazx.security.dto.LoginRequest;
 import com.am9.okazx.security.dto.RegisterRequest;
 import com.am9.okazx.service.AuthenticationService;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,17 +27,20 @@ public class AuthenticationController {
 
 
     @PostMapping("/register")
+    @Operation(summary = "Register a customer user")
     public ResponseEntity<AuthenticationResponse> register(@RequestBody @Valid RegisterRequest request){
         return ResponseEntity.status(HttpStatus.CREATED).body(authenticationService.register(request));
     }
 
-    //For test
-    @PostMapping("/register-admin")
+    @PostMapping("/admin/register")             // resolves to /api/v1/admin/users
+    @PreAuthorize("hasRole('ADMIN')")
+    @Operation(summary = "Register a admin user only by admin")
     public ResponseEntity<AuthenticationResponse> registerAdmin(@RequestBody @Valid RegisterRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(authenticationService.registerAdminUser(request));
     }
 
     @PostMapping("/login")
+    @Operation(summary = "User login")
     public ResponseEntity<AuthenticationResponse> authenticate(@RequestBody @Valid LoginRequest request){
         return ResponseEntity.ok(authenticationService.authenticate(request));
     }

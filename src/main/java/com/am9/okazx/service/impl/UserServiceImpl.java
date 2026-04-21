@@ -2,9 +2,11 @@ package com.am9.okazx.service.impl;
 
 import com.am9.okazx.exception.ResourceNotFoundException;
 import com.am9.okazx.dto.response.UserResponse;
+import com.am9.okazx.exception.UserAlreadyExistsException;
 import com.am9.okazx.mapper.UserMapper;
 import com.am9.okazx.dto.request.UserRequest;
 import com.am9.okazx.model.entity.User;
+import com.am9.okazx.repository.OrderRepository;
 import com.am9.okazx.repository.UserRepository;
 import com.am9.okazx.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +21,7 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final UserMapper userMapper;
+    private final OrderRepository orderRepository;
 
     @Override
     @Transactional(readOnly = true)
@@ -43,7 +46,11 @@ public class UserServiceImpl implements UserService {
        User user = userRepository.findById(id)
                .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + id));
 
-       userMapper.updateEntityFromRequest(updatedUserDto, user);
+        if (!user.getEmail().equals(updatedUserDto.email())
+                && userRepository.findByEmail(updatedUserDto.email()).isPresent()) {
+            throw new UserAlreadyExistsException("Email already in use");
+        }
+        userMapper.updateEntityFromRequest(updatedUserDto, user);
        return userMapper.toDto(
                userRepository.save(user)
        );
@@ -55,6 +62,7 @@ public class UserServiceImpl implements UserService {
         if (!userRepository.existsById(id)) {
             throw new ResourceNotFoundException("User not found with id: " + id);
         }
+        orderRepository.detachFromUser(id);
         userRepository.deleteById(id);
     }
 

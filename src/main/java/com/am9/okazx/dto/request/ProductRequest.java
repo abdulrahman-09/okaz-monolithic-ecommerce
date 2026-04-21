@@ -28,5 +28,6 @@ public record ProductRequest(
         @URL(message = "Image URL must be a valid URL")
         String imageUrl,
 
+        @NotNull(message = "Active status is required")
         Boolean active
 ) {}
