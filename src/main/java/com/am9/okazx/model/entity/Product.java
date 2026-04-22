@@ -11,7 +11,9 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "products")
 @Getter @Setter
+@Builder
 @NoArgsConstructor
+@AllArgsConstructor
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class Product {
     @Id
