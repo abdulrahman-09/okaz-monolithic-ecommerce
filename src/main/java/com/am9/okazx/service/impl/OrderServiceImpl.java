@@ -125,6 +125,11 @@ public class OrderServiceImpl implements OrderService {
 
         validateStatusTransition(order.getStatus(), OrderStatus.CANCELED);
 
+        order.getItems().forEach(item -> {
+            Product product = item.getProduct();
+            product.setStockQuantity(product.getStockQuantity() + item.getQuantity());
+        });
+
         order.setStatus(OrderStatus.CANCELED);
         return orderMapper.toDto(orderRepository.save(order));
     }

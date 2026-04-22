@@ -43,9 +43,7 @@ public class SecurityConfig {
                         .requestMatchers(
                                 "/swagger-ui/**",
                                 "/swagger-ui.html",
-                                "/v3/api-docs/**",
-                                "/api/v1/v3/api-docs/**",
-                                "/api/v1/swagger-ui.html"
+                                "/v3/api-docs/**"
                         ).permitAll()
 
                         .requestMatchers("/api/v1/cart/**").hasRole("CUSTOMER")

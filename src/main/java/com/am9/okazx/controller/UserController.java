@@ -37,7 +37,7 @@ public class UserController {
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN') or (hasRole('CUSTOMER') and #id == authentication.principal.id)")
+    @PreAuthorize("(hasRole('CUSTOMER') and #id == authentication.principal.id)")
     @Operation(summary = "Update user")
     public ResponseEntity<UserResponse> updateUser(@PathVariable Long id, @RequestBody @Valid UserRequest userDto){
         return ResponseEntity.ok(

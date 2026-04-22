@@ -51,7 +51,7 @@ public class OrderController {
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN') or (hasRole('CUSTOMER') and @orderService.isOwner(#id, authentication.principal.id))")
+    @PreAuthorize("hasRole('ADMIN') or (hasRole('CUSTOMER') and @orderServiceImpl.isOwner(#id, authentication.principal.id))")
     @Operation(summary = "Get order by order ID")
     public ResponseEntity<OrderResponse> findById(@PathVariable Long id) {
         return ResponseEntity.ok(orderService.findById(id));
@@ -67,7 +67,7 @@ public class OrderController {
     }
 
     @PatchMapping("/{id}/cancel")
-    @PreAuthorize("hasRole('ADMIN') or (hasRole('CUSTOMER') and @orderService.isOwner(#id, authentication.principal.id))")
+    @PreAuthorize("hasRole('ADMIN') or (hasRole('CUSTOMER') and @orderServiceImpl.isOwner(#id, authentication.principal.id))")
     @Operation(summary = "Cancel order by order id")
     public ResponseEntity<OrderResponse> cancelOrder(@PathVariable Long id) {
         return ResponseEntity.ok(orderService.cancelOrder(id));

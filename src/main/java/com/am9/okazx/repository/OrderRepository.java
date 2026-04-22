@@ -16,6 +16,6 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     List<Order> findAllByUser(User user);
     @Modifying
     @Transactional
-    @Query("UPDATE orders o SET o.user = null WHERE o.user.id = :userId")
+    @Query("UPDATE Order o SET o.user = null WHERE o.user.id = :userId")
     void detachFromUser(@Param("userId") Long id);
 }
