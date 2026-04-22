@@ -1,14 +1,12 @@
 package com.am9.okazx.service.impl;
 
 import com.am9.okazx.dto.request.UpdateOrderStatusRequest;
+import com.am9.okazx.exception.InsufficientStockException;
 import com.am9.okazx.exception.InvalidOrderStatusTransitionException;
 import com.am9.okazx.exception.ResourceNotFoundException;
 import com.am9.okazx.mapper.OrderMapper;
 import com.am9.okazx.dto.response.OrderResponse;
-import com.am9.okazx.model.entity.CartItem;
-import com.am9.okazx.model.entity.Order;
-import com.am9.okazx.model.entity.OrderItem;
-import com.am9.okazx.model.entity.User;
+import com.am9.okazx.model.entity.*;
 import com.am9.okazx.model.enums.OrderStatus;
 import com.am9.okazx.repository.CartItemRepository;
 import com.am9.okazx.repository.OrderRepository;
@@ -51,6 +49,20 @@ public class OrderServiceImpl implements OrderService {
         order.setUser(user);
         order.setTotalPrice(totalPrice);
         order.setStatus(OrderStatus.CONFIRMED);
+
+        //validate and decrement stock before persisting the order
+        cartItems.forEach(item -> {
+            Product product = item.getProduct();
+            int requested = item.getQuantity();
+            if (product.getStockQuantity() == null || product.getStockQuantity() < requested) {
+                throw new InsufficientStockException(
+                        "Not enough stock for product: '" + product.getName()
+                                + "'. Available: " + (product.getStockQuantity() == null ? 0 : product.getStockQuantity())
+                                + ", requested: " + requested
+                );
+            }
+            product.setStockQuantity(product.getStockQuantity() - requested);
+        });
 
         List<OrderItem> orderItems = cartItems.stream()
                 .map(item -> new OrderItem(null, item.getProduct(), item.getQuantity(), item.getPrice(), order))

@@ -1,5 +1,6 @@
 package com.am9.okazx.exception.handler;
 
+import com.am9.okazx.exception.InsufficientStockException;
 import com.am9.okazx.exception.InvalidOrderStatusTransitionException;
 import com.am9.okazx.exception.UserAlreadyExistsException;
 import com.am9.okazx.exception.ResourceNotFoundException;
@@ -53,6 +54,14 @@ public class GlobalExceptionHandler {
         log.warn("Invalid order status transition: {}", ex.getMessage());
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(new ErrorResponse(ex.getMessage()));
+    }
+
+    @ExceptionHandler(InsufficientStockException.class)
+    public ResponseEntity<ErrorResponse> handleInsufficientStock(InsufficientStockException ex) {
+        log.warn("Insufficient stock: {}", ex.getMessage());
+
+        return ResponseEntity.status(HttpStatus.CONFLICT)
                 .body(new ErrorResponse(ex.getMessage()));
     }
 

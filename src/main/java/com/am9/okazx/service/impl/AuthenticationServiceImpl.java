@@ -10,6 +10,7 @@ import com.am9.okazx.model.enums.UserRole;
 import com.am9.okazx.repository.UserRepository;
 import com.am9.okazx.security.service.JwtService;
 import com.am9.okazx.service.AuthenticationService;
+import org.springframework.security.core.Authentication;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -54,10 +55,10 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     @Override
     public AuthenticationResponse authenticate(LoginRequest request) {
-        authenticationManager.authenticate(
+        Authentication auth = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(request.email(), request.password())
         );
-        User user = userRepository.findByEmail(request.email()).orElseThrow();
+        User user = (User) auth.getPrincipal();
         String token = jwtService.generateToken(user);
         return new AuthenticationResponse(token);
     }

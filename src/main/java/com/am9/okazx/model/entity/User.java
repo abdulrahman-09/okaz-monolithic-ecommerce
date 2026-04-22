@@ -13,15 +13,18 @@ import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 
-@Entity(name = "users")
+@Entity
+@Table(name = "users")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Builder
 public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @EqualsAndHashCode.Include
     private Long id;
     private String firstName;
     private String lastName;
