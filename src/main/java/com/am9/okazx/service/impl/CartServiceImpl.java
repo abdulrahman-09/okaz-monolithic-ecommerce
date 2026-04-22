@@ -20,7 +20,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class CartIServiceImpl implements CartService {
+public class CartServiceImpl implements CartService {
     private final CartItemMapper cartItemMapper;
     private final ProductRepository productRepository;
     private final UserRepository userRepository;

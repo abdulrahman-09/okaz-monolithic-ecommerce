@@ -26,7 +26,7 @@ public class OrderController {
     @PostMapping
     @PreAuthorize("hasRole('CUSTOMER')")
     @Operation(summary = "Create order with app elements in current user cart")
-    public ResponseEntity<OrderResponse> creatOrder(
+    public ResponseEntity<OrderResponse> createOrder(
             Authentication authentication
     ){
         Long userId = ((User) authentication.getPrincipal()).getId();
