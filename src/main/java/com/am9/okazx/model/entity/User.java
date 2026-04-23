@@ -32,6 +32,9 @@ public class User implements UserDetails {
     @Column(unique = true)
     private String email;
     private String phone;
+
+    @Enumerated(EnumType.STRING)
+    @Builder.Default
     private UserRole userRole = UserRole.CUSTOMER;
     private String password;
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
