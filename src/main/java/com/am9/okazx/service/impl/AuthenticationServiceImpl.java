@@ -58,7 +58,9 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         Authentication auth = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(request.email(), request.password())
         );
-        User user = (User) auth.getPrincipal();
+        String email = auth.getName();
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
         String token = jwtService.generateToken(user);
         return new AuthenticationResponse(token);
     }

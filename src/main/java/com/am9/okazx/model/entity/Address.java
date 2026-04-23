@@ -7,8 +7,9 @@ import lombok.*;
 @Entity
 @Table(name = "addresses")
 @NoArgsConstructor
-@Getter
-@Setter
+@Getter @Setter
+@Builder
+@AllArgsConstructor
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class Address {
 
