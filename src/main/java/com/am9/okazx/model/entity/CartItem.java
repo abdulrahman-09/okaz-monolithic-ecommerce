@@ -10,8 +10,9 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "cart_items")
 @NoArgsConstructor
-@Getter
-@Setter
+@Getter @Setter
+@Builder
+@AllArgsConstructor
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class CartItem {
     @Id
