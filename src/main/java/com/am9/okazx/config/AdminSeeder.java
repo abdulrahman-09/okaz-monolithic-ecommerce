@@ -5,6 +5,7 @@ import com.am9.okazx.model.entity.User;
 import com.am9.okazx.model.enums.UserRole;
 import com.am9.okazx.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,6 +18,13 @@ public class AdminSeeder {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
+    @Value("${admin.email}")
+    private String adminEmail;
+
+    @Value("${admin.password}")
+    private String adminPassword;
+
+    // for inserting a default admin user
     @Bean
     ApplicationRunner seedAdmin() {
         return args -> {
@@ -31,8 +39,8 @@ public class AdminSeeder {
                 User admin = User.builder()
                         .firstName("Super")
                         .lastName("Admin")
-                        .email("admin@okazx.com")
-                        .password(passwordEncoder.encode("Admin@1234"))
+                        .email(adminEmail)
+                        .password(passwordEncoder.encode(adminPassword))
                         .userRole(UserRole.ADMIN)
                         .address(address)
                         .build();
