@@ -2,11 +2,14 @@ package com.am9.okazx.controller;
 
 
 import com.am9.okazx.dto.request.UserRequest;
+import com.am9.okazx.dto.response.PageResponse;
 import com.am9.okazx.dto.response.UserResponse;
 import com.am9.okazx.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -25,8 +28,12 @@ public class UserController {
     @GetMapping
     @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "List all users (ADMIN)")
-    public ResponseEntity<List<UserResponse>> getAllUsers(){
-        return ResponseEntity.ok(userService.findAll());
+    public ResponseEntity<PageResponse<UserResponse>> getAllUsers(
+            @RequestParam(value = "pageNo", defaultValue = "0") @Min(0) int pageNo,
+            @RequestParam(value = "pageSize", defaultValue = "10") @Min(1) @Max(100) int pageSize,
+            @RequestParam(value = "sortBy", defaultValue = "id,asc") String sortBy
+    ){
+        return ResponseEntity.ok(userService.findAll(pageNo, pageSize, sortBy));
     }
 
     @GetMapping("/{id}")

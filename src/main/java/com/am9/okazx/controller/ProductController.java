@@ -3,13 +3,17 @@ package com.am9.okazx.controller;
 
 
 import com.am9.okazx.dto.request.ProductRequest;
+import com.am9.okazx.dto.response.PageResponse;
 import com.am9.okazx.dto.response.ProductResponse;
 import com.am9.okazx.service.ProductService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.repository.query.Param;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -27,8 +31,12 @@ public class ProductController {
 
     @GetMapping
     @Operation(summary = "List all products")
-    public ResponseEntity<List<ProductResponse>> getAllProducts(){
-        return ResponseEntity.ok(productService.findAll());
+    public ResponseEntity<PageResponse<ProductResponse>> getAllProducts(
+            @RequestParam(value = "pageNo", defaultValue = "0") @Min(0) int pageNo,
+            @RequestParam(value = "pageSize", defaultValue = "10") @Min(1) @Max(100) int pageSize,
+            @RequestParam(value = "sortBy", defaultValue = "id,asc") String sortBy
+    ){
+        return ResponseEntity.ok(productService.findAll(pageNo, pageSize, sortBy));
     }
 
     @PostMapping

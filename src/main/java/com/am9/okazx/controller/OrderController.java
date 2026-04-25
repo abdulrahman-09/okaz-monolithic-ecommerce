@@ -2,11 +2,15 @@ package com.am9.okazx.controller;
 
 import com.am9.okazx.dto.request.UpdateOrderStatusRequest;
 import com.am9.okazx.dto.response.OrderResponse;
+import com.am9.okazx.dto.response.PageResponse;
+import com.am9.okazx.dto.response.ProductResponse;
 import com.am9.okazx.model.entity.User;
 import com.am9.okazx.service.OrderService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -38,8 +42,12 @@ public class OrderController {
     @GetMapping
     @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Get all orders")
-    public ResponseEntity<List<OrderResponse>> findAll() {
-        return ResponseEntity.ok(orderService.findAll());
+    public ResponseEntity<PageResponse<OrderResponse>> findAll(
+            @RequestParam(value = "pageNo", defaultValue = "0") @Min(0) int pageNo,
+            @RequestParam(value = "pageSize", defaultValue = "10") @Min(1) @Max(100) int pageSize,
+            @RequestParam(value = "sortBy", defaultValue = "id,asc") String sortBy
+    ) {
+        return ResponseEntity.ok(orderService.findAll(pageNo, pageSize, sortBy));
     }
 
     @GetMapping("/my")

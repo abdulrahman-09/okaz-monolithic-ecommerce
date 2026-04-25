@@ -1,6 +1,7 @@
 package com.am9.okazx.service.impl;
 
 import com.am9.okazx.dto.request.UpdateOrderStatusRequest;
+import com.am9.okazx.dto.response.PageResponse;
 import com.am9.okazx.exception.InsufficientStockException;
 import com.am9.okazx.exception.InvalidOrderStatusTransitionException;
 import com.am9.okazx.exception.ResourceNotFoundException;
@@ -13,6 +14,10 @@ import com.am9.okazx.repository.OrderRepository;
 import com.am9.okazx.repository.UserRepository;
 import com.am9.okazx.service.CartService;
 import com.am9.okazx.service.OrderService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -78,11 +83,24 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<OrderResponse> findAll() {
-        return orderRepository.findAll()
+    public PageResponse<OrderResponse> findAll(int pageNo, int pageSize, String sortBy) {
+        String[] sort = sortBy.split(",");
+        Sort sortObj = Sort.by(Sort.Direction.fromString(sort[1]), sort[0]);
+        Pageable pageable = PageRequest.of(pageNo, pageSize, sortObj);
+        Page<Order> orderPage = orderRepository.findAll(pageable);
+        List<OrderResponse> content = orderPage.getContent()
                 .stream()
                 .map(orderMapper::toDto)
                 .toList();
+        return new PageResponse<>(
+                content,
+                orderPage.getNumber(),
+                orderPage.getSize(),
+                orderPage.getTotalElements(),
+                orderPage.getTotalPages(),
+                orderPage.isFirst(),
+                orderPage.isLast()
+        );
     }
 
     @Override

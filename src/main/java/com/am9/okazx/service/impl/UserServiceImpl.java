@@ -1,5 +1,6 @@
 package com.am9.okazx.service.impl;
 
+import com.am9.okazx.dto.response.PageResponse;
 import com.am9.okazx.exception.ResourceNotFoundException;
 import com.am9.okazx.dto.response.UserResponse;
 import com.am9.okazx.exception.UserAlreadyExistsException;
@@ -10,6 +11,10 @@ import com.am9.okazx.repository.OrderRepository;
 import com.am9.okazx.repository.UserRepository;
 import com.am9.okazx.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,11 +30,25 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<UserResponse> findAll() {
-        return userRepository.findAll()
+    public PageResponse<UserResponse> findAll(int pageNo, int pageSize, String SortBy) {
+        String[] sortBy = SortBy.split(",");
+        Sort sortObj = Sort.by(Sort.Direction.fromString(sortBy[1]), sortBy[0]);
+        Pageable pageable = PageRequest.of(pageNo, pageSize, sortObj);
+        Page<User> page = userRepository.findAll(pageable);
+        List<UserResponse> content = page.getContent()
                 .stream()
                 .map(userMapper::toDto)
                 .toList();
+        return new PageResponse<>(
+                content,
+                page.getNumber(),
+                page.getSize(),
+                page.getTotalElements(),
+                page.getTotalPages(),
+                page.isFirst(),
+                page.isLast()
+        );
+
     }
 
     @Override
