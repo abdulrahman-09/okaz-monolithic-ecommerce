@@ -3,6 +3,7 @@ package com.am9.okazx.service.impl;
 import com.am9.okazx.dto.request.UpdateOrderStatusRequest;
 import com.am9.okazx.dto.response.OrderItemResponse;
 import com.am9.okazx.dto.response.OrderResponse;
+import com.am9.okazx.dto.response.PageResponse;
 import com.am9.okazx.exception.InsufficientStockException;
 import com.am9.okazx.exception.InvalidOrderStatusTransitionException;
 import com.am9.okazx.exception.ResourceNotFoundException;
@@ -21,6 +22,11 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -111,6 +117,78 @@ class OrderServiceImplTest {
     }
 
     @Test
+    @DisplayName("findAll should return PageResponse with paginated orders")
+    void findAll_ShouldReturnPageResponseWithPaginatedOrders() {
+        // Given
+        int pageNo = 0;
+        int pageSize = 10;
+        String sortBy = "id,asc";
+
+        Sort sort = Sort.by(Sort.Direction.ASC, "id");
+        Pageable pageable = PageRequest.of(pageNo, pageSize, sort);
+        List<Order> orders = List.of(testOrder);
+        Page<Order> orderPage = new PageImpl<>(orders, pageable, 1);
+
+        when(orderRepository.findAll(any(Pageable.class))).thenReturn(orderPage);
+        when(orderMapper.toDto(any(Order.class))).thenReturn(testOrderResponse);
+
+        // When
+        PageResponse<OrderResponse> result = orderService.findAll(pageNo, pageSize, sortBy);
+
+        // Then
+        assertEquals(1, result.content().size());
+        assertEquals(testOrderResponse, result.content().get(0));
+        assertEquals(0, result.pageNo());
+        assertEquals(10, result.pageSize());
+        assertEquals(1, result.totalElements());
+        assertEquals(1, result.totalPages());
+        assertTrue(result.first());
+        assertTrue(result.last());
+
+        verify(orderRepository).findAll(any(Pageable.class));
+        verify(orderMapper).toDto(testOrder);
+    }
+
+    @Test
+    @DisplayName("findAll should throw IllegalArgumentException for invalid sort direction")
+    void findAll_InvalidSortDirection_ShouldThrowIllegalArgumentException() {
+        // Given
+        String sortBy = "id,ascending";  // Invalid direction
+
+        // When & Then
+        assertThrows(IllegalArgumentException.class,
+                () -> orderService.findAll(0, 10, sortBy));
+
+        verify(orderRepository, never()).findAll(any(Pageable.class));
+    }
+
+    @Test
+    @DisplayName("findAll should handle empty pages correctly")
+    void findAll_EmptyPage_ShouldReturnEmptyContent() {
+        // Given
+        int pageNo = 10;
+        int pageSize = 10;
+        String sortBy = "id,asc";
+
+        Sort sort = Sort.by(Sort.Direction.ASC, "id");
+        Pageable pageable = PageRequest.of(pageNo, pageSize, sort);
+        List<Order> emptyOrders = List.of();
+        Page<Order> orderPage = new PageImpl<>(emptyOrders, pageable, 0);
+
+        when(orderRepository.findAll(any(Pageable.class))).thenReturn(orderPage);
+
+        // When
+        PageResponse<OrderResponse> result = orderService.findAll(pageNo, pageSize, sortBy);
+
+        // Then
+        assertEquals(0, result.content().size());
+        assertEquals(0, result.totalElements());
+        assertEquals(0, result.totalPages());
+
+        verify(orderRepository).findAll(any(Pageable.class));
+    }
+
+    @Test
     @DisplayName("createOrder should create order successfully when cart has items and sufficient stock")
     void createOrder_ShouldCreateOrder_WhenValid() {
         // Arrange
@@ -177,25 +255,6 @@ class OrderServiceImplTest {
         verify(userRepository).findById(USER_ID);
         verify(cartItemRepository).findByUser(testUser);
         verify(orderRepository, never()).save(any(Order.class));
-    }
-
-    @Test
-    @DisplayName("findAll should return list of order responses")
-    void findAll_ShouldReturnListOfOrderResponses() {
-        // Arrange
-        List<Order> orders = List.of(testOrder);
-        List<OrderResponse> expectedResponses = List.of(testOrderResponse);
-        when(orderRepository.findAll()).thenReturn(orders);
-        when(orderMapper.toDto(any(Order.class))).thenReturn(testOrderResponse);
-
-        // Act
-        List<OrderResponse> result = orderService.findAll();
-
-        // Assert
-        assertEquals(expectedResponses.size(), result.size());
-        assertEquals(expectedResponses.get(0).id(), result.get(0).id());
-        verify(orderRepository).findAll();
-        verify(orderMapper).toDto(testOrder);
     }
 
     @Test

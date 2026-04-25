@@ -1,6 +1,7 @@
 package com.am9.okazx.service.impl;
 
 import com.am9.okazx.dto.request.ProductRequest;
+import com.am9.okazx.dto.response.PageResponse;
 import com.am9.okazx.dto.response.ProductResponse;
 import com.am9.okazx.exception.ResourceNotFoundException;
 import com.am9.okazx.mapper.ProductMapper;
@@ -13,12 +14,16 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 
 import java.math.BigDecimal;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -69,20 +74,117 @@ public class ProductServiceImplTest {
     }
 
     @Test
-    @DisplayName("find all products should return list of product response")
-    void findAll_ShouldReturnListOfProductResponse() {
+    @DisplayName("findAll should return PageResponse with paginated products")
+    void findAll_ShouldReturnPageResponseWithPaginatedProducts() {
         // Given
+        int pageNo = 0;
+        int pageSize = 10;
+        String sortBy = "id,asc";
+
+        Sort sort = Sort.by(Sort.Direction.ASC, "id");
+        Pageable pageable = PageRequest.of(pageNo, pageSize, sort);
+        List<Product> products = List.of(product);
+        Page<Product> productPage = new PageImpl<>(products, pageable, 1);
+
+        when(productRepository.findAll(any(Pageable.class))).thenReturn(productPage);
+        when(productMapper.toDto(any(Product.class))).thenReturn(productResponse);
+
+        // When
+        PageResponse<ProductResponse> result = productService.findAll(pageNo, pageSize, sortBy);
+
+        // Then
+        assertEquals(1, result.content().size());
+        assertEquals(productResponse, result.content().get(0));
+        assertEquals(0, result.pageNo());
+        assertEquals(10, result.pageSize());
+        assertEquals(1, result.totalElements());
+        assertEquals(1, result.totalPages());
+        assertTrue(result.first());
+        assertTrue(result.last());
+
+        verify(productRepository).findAll(any(Pageable.class));
+        verify(productMapper).toDto(product);
+    }
+
+    @Test
+    @DisplayName("findAll should throw IllegalArgumentException for invalid sort direction")
+    void findAll_InvalidSortDirection_ShouldThrowIllegalArgumentException() {
+        // Given
+        int pageNo = 0;
+        int pageSize = 10;
+        String sortBy = "id,des";  // Invalid direction
+
+        // When & Then
+        assertThrows(IllegalArgumentException.class,
+                () -> productService.findAll(pageNo, pageSize, sortBy));
+
+        verify(productRepository, never()).findAll(any(Pageable.class));
+    }
+
+    @Test
+    @DisplayName("findAll should return correct pagination metadata for middle page")
+    void findAll_MiddlePage_ShouldIndicateNotFirstAndNotLast() {
+        // Given
+        int pageNo = 1;
+        int pageSize = 10;
+        String sortBy = "name,asc";
+
+        Sort sort = Sort.by(Sort.Direction.ASC, "name");
+        Pageable pageable = PageRequest.of(pageNo, pageSize, sort);
+        List<Product> products = List.of(product);
+        Page<Product> productPage = new PageImpl<>(products, pageable, 150);  // 15 pages total
+
+        when(productRepository.findAll(any(Pageable.class))).thenReturn(productPage);
+        when(productMapper.toDto(any(Product.class))).thenReturn(productResponse);
+
+        // When
+        PageResponse<ProductResponse> result = productService.findAll(pageNo, pageSize, sortBy);
+
+        // Then
+        assertFalse(result.first());
+        assertFalse(result.last());
+        assertEquals(150, result.totalElements());
+        assertEquals(15, result.totalPages());
+
+        verify(productRepository).findAll(any(Pageable.class));
+    }
+
+    @Test
+    @DisplayName("searchProducts should return list of products matching keyword")
+    void searchProducts_ShouldReturnListOfProductsMatchingKeyword() {
+        // Given
+        String keyword = "Test";
         List<Product> products = List.of(product);
         List<ProductResponse> expectedResponses = List.of(productResponse);
-        when(productRepository.findAll()).thenReturn(products);
+
+        when(productRepository.searchProducts(keyword)).thenReturn(products);
         when(productMapper.toDto(any(Product.class))).thenReturn(productResponse);
+
         // When
-        List<ProductResponse> result = productService.findAll();
+        List<ProductResponse> result = productService.searchProducts(keyword);
+
         // Then
         assertEquals(expectedResponses.size(), result.size());
         assertEquals(expectedResponses.get(0), result.get(0));
-        verify(productRepository).findAll();
-        verify(productMapper).toDto(products.get(0));
+        verify(productRepository).searchProducts(keyword);
+        verify(productMapper).toDto(product);
+    }
+
+    @Test
+    @DisplayName("searchProducts should return empty list when no products match")
+    void searchProducts_ShouldReturnEmptyList_WhenNoProductsMatch() {
+        // Given
+        String keyword = "NonExistent";
+
+        when(productRepository.searchProducts(keyword)).thenReturn(List.of());
+
+        // When
+        List<ProductResponse> result = productService.searchProducts(keyword);
+
+        // Then
+        assertTrue(result.isEmpty());
+        verify(productRepository).searchProducts(keyword);
+        verify(productMapper, never()).toDto(any(Product.class));
     }
 
     @Test
@@ -108,23 +210,6 @@ public class ProductServiceImplTest {
         assertThrows(ResourceNotFoundException.class, () -> productService.findById(2L));
         verify(productRepository).findById(2L);
         verify(productMapper, never()).toDto(any(Product.class));
-    }
-
-    @Test
-    @DisplayName("search product should return list of product response")
-    void searchProducts_ShouldReturnListOfProductResponse() {
-        // Given
-        List<Product> products = List.of(product);
-        List<ProductResponse> expectedResponses = List.of(productResponse);
-        when(productRepository.searchProducts(any(String.class))).thenReturn(products);
-        when(productMapper.toDto(any(Product.class))).thenReturn(productResponse);
-        // When
-        List<ProductResponse> result = productService.searchProducts("Test");
-        // Then
-        assertEquals(expectedResponses.size(), result.size());
-        assertEquals(expectedResponses.get(0), result.get(0));
-        verify(productRepository).searchProducts("Test");
-        verify(productMapper).toDto(products.get(0));
     }
 
     @Test
@@ -194,7 +279,6 @@ public class ProductServiceImplTest {
         verify(productRepository).existsById(2L);
         verify(productRepository, never()).deleteById(any(Long.class));
     }
-
 
 
 }

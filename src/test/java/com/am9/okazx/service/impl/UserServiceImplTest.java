@@ -3,6 +3,7 @@ package com.am9.okazx.service.impl;
 import com.am9.okazx.dto.request.AddressRequest;
 import com.am9.okazx.dto.request.UserRequest;
 import com.am9.okazx.dto.response.AddressResponse;
+import com.am9.okazx.dto.response.PageResponse;
 import com.am9.okazx.dto.response.UserResponse;
 import com.am9.okazx.exception.ResourceNotFoundException;
 import com.am9.okazx.exception.UserAlreadyExistsException;
@@ -19,6 +20,11 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -27,6 +33,7 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -111,22 +118,75 @@ class UserServiceImplTest {
     }
 
     @Test
-    @DisplayName("findAll should return list of user responses")
-    void findAll_ShouldReturnListOfUserResponses() {
-        // Arrange
+    @DisplayName("findAll should return PageResponse with paginated users")
+    void findAll_ShouldReturnPageResponseWithPaginatedUsers() {
+        // Given
+        int pageNo = 0;
+        int pageSize = 10;
+        String sortBy = "id,asc";
+
+        Sort sort = Sort.by(Sort.Direction.ASC, "id");
+        Pageable pageable = PageRequest.of(pageNo, pageSize, sort);
         List<User> users = List.of(testUser);
-        List<UserResponse> expectedResponses = List.of(userResponse);
-        when(userRepository.findAll()).thenReturn(users);
+        Page<User> userPage = new PageImpl<>(users, pageable, 1);
+
+        when(userRepository.findAll(any(Pageable.class))).thenReturn(userPage);
         when(userMapper.toDto(any(User.class))).thenReturn(userResponse);
 
-        // Act
-        List<UserResponse> result = userService.findAll();
+        // When
+        PageResponse<UserResponse> result = userService.findAll(pageNo, pageSize, sortBy);
 
-        // Assert
-        assertEquals(expectedResponses.size(), result.size());
-        assertEquals(expectedResponses.get(0).id(), result.get(0).id());
-        verify(userRepository).findAll();
+        // Then
+        assertEquals(1, result.content().size());
+        assertEquals(userResponse, result.content().get(0));
+        assertEquals(0, result.pageNo());
+        assertEquals(10, result.pageSize());
+        assertEquals(1, result.totalElements());
+        assertEquals(1, result.totalPages());
+        assertTrue(result.first());
+        assertTrue(result.last());
+
+        verify(userRepository).findAll(any(Pageable.class));
         verify(userMapper).toDto(testUser);
+    }
+
+    @Test
+    @DisplayName("findAll should throw IllegalArgumentException for invalid sort direction")
+    void findAll_InvalidSortDirection_ShouldThrowIllegalArgumentException() {
+        // Given
+        String sortBy = "email,invalid";  // Invalid direction
+
+        // When & Then
+        assertThrows(IllegalArgumentException.class,
+                () -> userService.findAll(0, 10, sortBy));
+
+        verify(userRepository, never()).findAll(any(Pageable.class));
+    }
+
+    @Test
+    @DisplayName("findAll should sort by different fields correctly")
+    void findAll_DifferentSortFields_ShouldApplyCorrectSorting() {
+        // Given
+        int pageNo = 0;
+        int pageSize = 10;
+        String sortBy = "email,desc";
+
+        Sort sort = Sort.by(Sort.Direction.DESC, "email");
+        Pageable pageable = PageRequest.of(pageNo, pageSize, sort);
+        List<User> users = List.of(testUser);
+        Page<User> userPage = new PageImpl<>(users, pageable, 50);
+
+        when(userRepository.findAll(any(Pageable.class))).thenReturn(userPage);
+        when(userMapper.toDto(any(User.class))).thenReturn(userResponse);
+
+        // When
+        PageResponse<UserResponse> result = userService.findAll(pageNo, pageSize, sortBy);
+
+        // Then
+        assertEquals(50, result.totalElements());
+        assertFalse(result.last());
+
+        verify(userRepository).findAll(any(Pageable.class));
     }
 
     @Test
