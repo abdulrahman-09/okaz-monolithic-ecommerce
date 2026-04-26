@@ -32,7 +32,7 @@ public class AuthenticationController {
         return ResponseEntity.status(HttpStatus.CREATED).body(authenticationService.register(request));
     }
 
-    @PostMapping("/admin/register")             // resolves to /api/v1/admin/users
+    @PostMapping("/admin/register")
     @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Register a admin user only by admin")
     public ResponseEntity<AuthenticationResponse> registerAdmin(@RequestBody @Valid RegisterRequest request) {
