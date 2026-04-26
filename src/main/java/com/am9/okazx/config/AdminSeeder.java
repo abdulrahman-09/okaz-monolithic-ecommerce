@@ -28,7 +28,7 @@ public class AdminSeeder {
     @Bean
     ApplicationRunner seedAdmin() {
         return args -> {
-            if (userRepository.findByEmail("admin@okazx.com").isEmpty()) {
+            if (userRepository.findByEmail(adminEmail).isEmpty()) {
                 Address address = new Address();
                 address.setStreet("HQ");
                 address.setCity("Cairo");
