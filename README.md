@@ -366,7 +366,7 @@ Debug: Add `logging.level.com.am9.okazx=DEBUG` to properties.
 
 ## References
 
-- [Spring Boot Documentation](https://docs.spring.io/spring-boot/docs/4.0.5/reference/html/)
+- [Spring Boot Documentation](https://docs.spring.io/spring-boot/index.html)
 - [Spring Security Reference](https://docs.spring.io/spring-security/reference/)
 - [JJWT Library](https://github.com/jwtk/jjwt)
 - [MapStruct User Guide](https://mapstruct.org/documentation/stable/reference/html/)
