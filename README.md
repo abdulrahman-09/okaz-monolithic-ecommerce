@@ -15,7 +15,7 @@ E-commerce backend monolith built with Spring Boot 4.0.5. Handles user auth, pro
 **Requirements:** JDK 25, Maven 3.8+, PostgreSQL 15 (or Docker Compose)
 
 ```bash
-git clone https://github.com/abdulrahman-09/okaz-monolithic-ecommerce && cd okazx
+git clone https://github.com/abdulrahman-09/okazx-monolithic-ecommerce && cd okazx
 
 # Create .env (example)
 cat > .env << EOF
