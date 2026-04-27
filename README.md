@@ -333,18 +333,26 @@ Services communicate via internal network. App waits for DB dependency.
 Key properties in `application.properties`:
 
 ```properties
+# Database Configuration
 spring.datasource.url=${DB_URL}
+spring.datasource.username=${DB_USER}
+spring.datasource.password=${DB_PASS}
+
 spring.jpa.hibernate.ddl-auto=update
 spring.jpa.show-sql=true
 
+# Security
 security.jwt.secret-key=${JWT_SECRET_KEY}
 security.jwt.expiration-time=${JWT_EXPIRATION_TIME}
 
+# Actuator & Monitoring
 management.endpoints.web.exposure.include=health,info,metrics,env,loggers
+
+# OpenAPI / Swagger
 springdoc.swagger-ui.enabled=true
 ```
 
-Env vars loaded from `.env` via `spring.config.import`.
+All environment variables (`DB_URL`, `DB_USER`, `DB_PASS`, `JWT_SECRET_KEY`, `JWT_EXPIRATION_TIME`) are loaded from `.env` via `spring.config.import`.
 
 ---
 
