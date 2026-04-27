@@ -77,15 +77,15 @@ On requests: JwtAuthenticationFilter extracts the Bearer token from the Authoriz
 
 ## Tech Stack
 
-| Component | Choice | Why |
-|-----------|--------|-----|
-| **Framework** | [Spring Boot 4.0.5](https://spring.io/projects/spring-boot) | Latest stable with improved startup times |
+| Component | Choice | Why                                               |
+|-----------|--------|---------------------------------------------------|
+| **Framework** | [Spring Boot 4.0.5](https://spring.io/projects/spring-boot) | Latest stable with improved startup times         |
 | **Auth** | [JJWT 0.13.0](https://github.com/jwtk/jjwt), BCrypt | Stateless JWT with HS256; secure password hashing |
-| **Database** | [PostgreSQL 15](https://www.postgresql.org/), Hibernate | ACID compliance; auto-schema generation |
-| **Mapping** | [MapStruct 1.6.1](https://mapstruct.org/) | Compile-time DTO mapping, no runtime overhead |
-| **API Docs** | [SpringDoc OpenAPI 3.0.2](https://springdoc.org/) | Auto-generates specs from annotations |
-| **Testing** | JUnit 5, Mockito | Unit tests with in-memory DB isolation |
-| **Container** | Docker, Eclipse Temurin JDK 25 | Multi-stage builds for smaller images |
+| **Database** | [PostgreSQL 15](https://www.postgresql.org/), Hibernate | ACID compliance; auto-schema generation           |
+| **Mapping** | [MapStruct 1.6.1](https://mapstruct.org/) | Compile-time DTO mapping, no runtime overhead     |
+| **API Docs** | [SpringDoc OpenAPI 3.0.2](https://springdoc.org/) | Auto-generates specs from annotations             |
+| **Testing** | JUnit 5, Mockito | Unit tests for service layer methods              |
+| **Container** | Docker, Eclipse Temurin JDK 25 | Multi-stage builds for smaller images             |
 
 ---
 
